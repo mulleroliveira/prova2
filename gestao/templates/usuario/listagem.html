@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block localizacao %}
+<div class="col-md-5 col-8 align-self-center">
+    <h3 class="text-themecolor m-b-0 m-t-0">Dashboard</h3>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active"><a href="/gestao/">Home</a></li>
+        <li class="breadcrumb-item"><a href="javascript:void(0)">Listagem</a></li>
+    </ol>
+</div>
+<div class="col-md-7 col-4 align-self-center">
+    <a href="{% url 'logout' %}" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down">Sair</a>
+</div>
+{% endblock %}
+{% block listagem %}
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th scope="col">UserName</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Sobrenome</th>
+            <th scope="col">Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <th>{{user.username}}</th>
+            <td>{{user.first_name}}</td>
+            <td>{{user.last_name}}</td>
+            <td>{{user.email}}</td>
+            <td><button type="button" class="btn btn-danger" data-id="{{user.id}}" data-toggle="modal"
+                    data-target="#chamarmodal">Excluir</button></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="modal fade" id="chamarmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="user">Deseja realmente seguir essa exclusão ?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="" id="confirm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sim</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>$('#chamarmodal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Botão que acionou o modal
+        var recipient = button.data('id') // Extrai informação dos atributos data-*
+        // Se necessário, você pode iniciar uma requisição AJAX aqui e, então, fazer a atualização em um callback.
+        // Atualiza o conteúdo do modal. Nós vamos usar jQuery, aqui. No entanto, você poderia usar uma biblioteca de data binding ou outros métodos.
+        var modal = $(this)
+        modal.find('#confirm').attr('action', '/gestao/listagem/delete/' + recipient + '/')
+        // Aqui localizo o a //localizo o atributo // Aqui eu passo o valor desejado
+        //tag que tem o id   // no qual eu quero
+        //#confirm           // colocar o valor
+    })</script>
+{% endblock %}
